@@ -1,0 +1,15 @@
+.venv/
+venv/
+.env/
+env/
+
+__pycache__/
+.vscode/
+
+src/database/backups/*.sqlite3
+src/database/backups/*.sqlite
+
+src/database/*.sqlite3
+src/database/*.sqlite
+!src/database/*empty.sqlite3
+!src/database/*empty.sqlite
