@@ -1,0 +1,32 @@
+[MASTER]
+# Specify a configuration file.
+# pylintrc
+
+[FORMAT]
+max-line-length=100
+
+[MESSAGES CONTROL]
+disable=
+    C0103,  # Variable name doesn't conform to snake_case
+    C0114,  # Missing module docstring
+    C0115,  # Missing class docstring
+    C0116,  # Missing function or method docstring
+
+[BASIC]
+variable-naming-style=snake_case
+argument-naming-style=snake_case
+attr-naming-style=snake_case
+
+
+function-naming-style=CamelCase
+method-naming-style=CamelCase
+
+# Naming style matching for class names.
+class-naming-style=CamelCase
+
+# Naming style for constants.
+const-naming-style=UPPER_CASE
+
+[TYPECHECK]
+disable=
+    E1101  # Ignore 'Module has no member' for dynamic attributes.
