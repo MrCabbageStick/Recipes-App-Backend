@@ -1,8 +1,11 @@
-'''Dataclasses, with queries, representing query fields'''
+'''
+Dataclasses, with queries, representing query fields.
+'''
+
 from dataclasses import dataclass
 
 @dataclass
-class IngredientGroup:
+class TranslatedIngredientGroup:
     id: int
     fallback_name: str
     translated_name: str
@@ -62,13 +65,41 @@ class TranslatedIngredient:
         )
 
 @dataclass
+class BareTranslatedIngredient:
+    id: int
+    fallback_name: str
+    translated_name: str
+
+    @staticmethod
+    def allRecipeIngredients(country_code: str, recipe_id: int) -> tuple[str, tuple[str, int]]:
+        return (
+            """SELECT 
+                recipe_ingredient.ingredient_id,
+                ingredient.fallback_name,
+                ingredient_translation.name
+            FROM ingredient_group
+            INNER JOIN recipe_ingredient
+                ON recipe_ingredient.ingredient_group_id = ingredient_group.id
+            LEFT JOIN ingredient_translation
+                ON ingredient_translation.ingredient_id = recipe_ingredient.ingredient_id
+                AND ingredient_translation.country_code = ?
+            INNER JOIN ingredient
+                ON ingredient.id = recipe_ingredient.ingredient_id
+            WHERE
+                ingredient_group.id = ?
+            GROUP BY
+                recipe_ingredient.ingredient_id""",
+            (country_code, recipe_id)
+        )
+
+@dataclass
 class Language:
     country_code: str
     language_name: str
     icon: str
 
     @staticmethod
-    def stepsLanguages(recipe_id: int) -> tuple[str, tuple[str]]:
+    def stepsLanguages(recipe_id: int) -> tuple[str, tuple[int]]:
         return (
             """SELECT 
                 recipe_step.country_code,
@@ -85,7 +116,7 @@ class Language:
         )
     
     @staticmethod
-    def recipeNameLanguages(recipe_id: int) -> tuple[str, tuple[str]]:
+    def recipeNameLanguages(recipe_id: int) -> tuple[str, tuple[int]]:
         return (
             """SELECT 
                 language.country_code,
@@ -102,7 +133,7 @@ class Language:
         )
 
     @staticmethod
-    def ingredientLanguages(ingredient_id: int) -> tuple[str, tuple[str]]:
+    def ingredientLanguages(ingredient_id: int) -> tuple[str, tuple[int]]:
         return (
             """SELECT 
                 language.country_code,
@@ -119,7 +150,7 @@ class Language:
         )
     
     @staticmethod
-    def ingredientLanguages(ingredient_group_id: int) -> tuple[str, tuple[str]]:
+    def ingredientLanguages(ingredient_group_id: int) -> tuple[str, tuple[int]]:
         return (
             """SELECT 
                 language.country_code,
@@ -133,4 +164,28 @@ class Language:
             GROUP BY
                 ingredient_group_translation.country_code""",
             (ingredient_group_id)
+        )
+
+
+@dataclass
+class TranslatedRecipe:
+    id: int
+    fallback_name: str
+    translated_name: str
+
+    @staticmethod
+    def translatedRecipe(recipe_id: int, country_code:str) -> tuple[str, tuple[int, str]]:
+        return (
+            """SELECT 
+                recipe.id,
+                recipe.fallback_name,
+                recipe_name_translation.name
+            FROM
+                recipe
+            LEFT JOIN recipe_name_translation
+                ON recipe_name_translation.recipe_id = recipe.id
+                AND recipe_name_translation.country_code = ?
+            WHERE 
+                recipe.id = ?""",
+            (country_code, recipe_id)
         )
