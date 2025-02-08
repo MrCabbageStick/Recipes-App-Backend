@@ -112,7 +112,7 @@ class Language:
                 recipe_step.recipe_id = ?
             GROUP BY
                 recipe_step.country_code""",
-            (recipe_id)
+            (recipe_id, )
         )
     
     @staticmethod
@@ -129,7 +129,7 @@ class Language:
                 recipe_name_translation.recipe_id = ?
             GROUP BY
                 recipe_name_translation.country_code""",
-            (recipe_id)
+            (recipe_id, )
         )
 
     @staticmethod
@@ -146,7 +146,7 @@ class Language:
                 ingredient_translation.ingredient_id = ?
             GROUP BY
                 ingredient_translation.country_code""",
-            (ingredient_id)
+            (ingredient_id, )
         )
     
     @staticmethod
@@ -163,7 +163,7 @@ class Language:
                 ingredient_group_translation.ingredient_group_id = ?
             GROUP BY
                 ingredient_group_translation.country_code""",
-            (ingredient_group_id)
+            (ingredient_group_id, )
         )
 
 
@@ -188,4 +188,25 @@ class TranslatedRecipe:
             WHERE 
                 recipe.id = ?""",
             (country_code, recipe_id)
+        )
+    
+
+@dataclass
+class RecipeShort:
+    id: int
+    fallback_name: str
+    translated_name: str
+
+    @staticmethod
+    def translatedRecipes(country_code: str) -> tuple[str, tuple[str]]:
+        return (
+            """SELECT
+                recipe.id,
+                recipe.fallback_name,
+                recipe_name_translation.name
+            FROM recipe
+            LEFT JOIN recipe_name_translation
+                ON recipe_name_translation.recipe_id = recipe.id
+                AND recipe_name_translation.country_code = ?""",
+            (country_code, )
         )
