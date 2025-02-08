@@ -13,3 +13,5 @@ data/*.sqlite3
 data/*.sqlite
 !data/*empty.sqlite3
 !data/*empty.sqlite
+
+*__local*

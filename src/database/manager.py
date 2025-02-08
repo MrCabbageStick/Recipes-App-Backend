@@ -1,6 +1,6 @@
 from pathlib import Path
 import sqlite3
-from .query_classes import IngredientGroup
+from .query_classes import RecipeShort
 
 class DatabaseManager:
     db_path: Path
@@ -20,6 +20,6 @@ class DatabaseManager:
             return cursor
         
 
-    def test(self):
-        curr = self._execute(*IngredientGroup.ingredientGroups("pl", 1))
-        return [IngredientGroup(*row) for row in curr.fetchall()]
+    def getAllRecipesShort(self, country_code: str) -> list[RecipeShort]:
+        curr = self._execute(*RecipeShort.translatedRecipes(country_code))
+        return [RecipeShort(*row) for row in curr.fetchall()]
